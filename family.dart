@@ -75,19 +75,20 @@ class Husband extends FamilyMember {
   int huppenes = 100;
   int hungry = 30;
 
-  void eating() {
+  bool eating() {
     super.dirting("human");
 
     List<int> result = super.eat(30 - this.hungry);
 
     if (result[0] == 0 && result[1] == 0) {
       print("В доме нет еды");
-      return;
+      return true;
     }
 
     this.hungry += result[1];
     print(
         '$name съел ${result[1]} единиц еды. Осталось голода: ${this.hungry}.');
+    return false;
   }
 
   void playing() {
@@ -113,19 +114,20 @@ class Wife extends FamilyMember {
   int huppenes = 100;
   int hungry = 30;
 
-  void eating() {
+  bool eating() {
     super.dirting("human");
 
     List<int> result = super.eat(30 - this.hungry);
 
     if (result[0] == 0 && result[1] == 0) {
       print("В доме нет еды");
-      return;
+      return true;
     }
 
     this.hungry += result[1];
     print(
         '$name съела ${result[1]} единиц еды. Осталось голода: ${this.hungry}.');
+    return false;
   }
 
   void buyFood() {
@@ -187,9 +189,9 @@ class Actions {
     }
   }
 
-  void followLiveForHusband({int condition = 0}) {
+  bool? followLiveForHusband({int condition = 0}) {
     if (husband.hungry <= 10 || condition == 1) {
-      husband.eating();
+      return husband.eating();
       // print("${husband.name} поел");
     } else if (husband.huppenes <= 10 || condition == 2) {
       husband.playing();
@@ -203,9 +205,9 @@ class Actions {
     }
   }
 
-  void followLiveForWife({int condition = 0}) {
+  bool? followLiveForWife({int condition = 0}) {
     if (wife.hungry <= 10 || condition == 1) {
-      wife.eating();
+      return wife.eating();
       // print("${wife.name} поела");
     } else if (wife.huppenes <= 10 || condition == 2) {
       wife.buyShuba();
