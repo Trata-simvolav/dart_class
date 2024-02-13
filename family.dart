@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:io';
 
 class FamilyMember {
   int many = 100;
@@ -225,14 +224,11 @@ class Actions {
 }
 
 void main() {
-  File file = File('output.txt');
-  IOSink sink = file.openWrite();
-
   Actions actionPanel = Actions("Воронины");
 
   for (int i = 1; i < 356; i++) {
-    sink.writeln("-----------------------------------------");
-    sink.writeln('День $i');
+    print("-----------------------------------------");
+    print('День $i');
 
     actionPanel.followLiveForHusband();
     actionPanel.followLiveForWife();
@@ -242,5 +238,4 @@ void main() {
       return;
     }
   }
-  sink.close();
 }
