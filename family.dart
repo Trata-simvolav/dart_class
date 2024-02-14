@@ -47,8 +47,8 @@ class FamilyMember {
   int buyF() {
     int forBuy = 50 - this.food;
     if (forBuy < this.many) {
-      this.many -= forBuy;
-      this.food += forBuy;
+      this.many = this.many - forBuy;
+      this.food = this.food + forBuy;
       return this.food;
     } else if (this.many > 0) {
       this.food += this.many;
@@ -86,8 +86,7 @@ class Husband extends FamilyMember {
     }
 
     this.hungry += result[1];
-    print(
-        '$name съел ${result[1]} единиц еды. Осталось голода: ${this.hungry}.');
+    print('$name съела ${result[1]} единиц еды. Осталось еды: ${result[0]}.');
     return false;
   }
 
@@ -125,8 +124,7 @@ class Wife extends FamilyMember {
     }
 
     this.hungry += result[1];
-    print(
-        '$name съела ${result[1]} единиц еды. Осталось голода: ${this.hungry}.');
+    print('$name съела ${result[1]} единиц еды. Осталось еды: ${result[0]}.');
     return false;
   }
 
@@ -190,37 +188,44 @@ class Actions {
   }
 
   bool? followLiveForHusband({int condition = 0}) {
-    if (husband.hungry <= 10 || condition == 1) {
+    if (husband.hungry <= 10 && familyMember.food > 10 || condition == 1) {
       return husband.eating();
       // print("${husband.name} поел");
-    } else if (husband.huppenes <= 10 || condition == 2) {
-      husband.playing();
-      // print("${husband.name} поиграл в WoT");
     } else if (familyMember.many <= 20 || condition == 3) {
       husband.working();
+      return null;
       // print("${husband.name} поработал");
+    } else if (husband.huppenes <= 10 || condition == 2) {
+      husband.playing();
+      return null;
+      // print("${husband.name} поиграл в WoT");
     } else {
       int randomNumber = Random().nextInt(3) + 1;
       this.followLiveForHusband(condition: randomNumber);
+      return null;
     }
   }
 
   bool? followLiveForWife({int condition = 0}) {
-    if (wife.hungry <= 10 || condition == 1) {
+    if (wife.hungry <= 10 && familyMember.food > 10 || condition == 1) {
       return wife.eating();
       // print("${wife.name} поела");
-    } else if (wife.huppenes <= 10 || condition == 2) {
-      wife.buyShuba();
-      // print("${wife.name} купила шубу");
     } else if (familyMember.food <= 10 || condition == 3) {
       wife.buyFood();
+      return null;
       // print("${wife.name} купила еды в дом");
+    } else if (wife.huppenes <= 10 || condition == 2) {
+      wife.buyShuba();
+      return null;
+      // print("${wife.name} купила шубу");
     } else if (familyMember.dirt >= 80 || condition == 4) {
       wife.cleaning();
+      return null;
       // print("${wife.name} убралась");
     } else {
       int randomNumber = Random().nextInt(4) + 1;
       this.followLiveForWife(condition: randomNumber);
+      return null;
     }
   }
 }
@@ -232,8 +237,15 @@ void main() {
     print("-----------------------------------------");
     print('День $i');
 
-    actionPanel.followLiveForHusband();
-    actionPanel.followLiveForWife();
+    if (actionPanel.followLiveForHusband() == true) {
+      print("Нет еды");
+      return;
+    }
+
+    if (actionPanel.followLiveForWife() == true) {
+      print("Нет еды");
+      return;
+    }
     if (!actionPanel.alive()) {
       print(
           "Кто-то в семьи ${actionPanel.lastnameFamily} умер. Игра не пройдена! Попробуй ещё раз!");
