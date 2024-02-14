@@ -71,6 +71,10 @@ class FamilyMember {
 
 // ---------------------------------------------------------------------------------------------------------
 class Husband extends FamilyMember {
+  Husband(FamilyMember classFami) {
+    this.unifiedClass = classFami;
+  }
+  FamilyMember unifiedClass = FamilyMember();
   String name = "Alex";
   int huppenes = 100;
   int hungry = 30;
@@ -108,15 +112,20 @@ class Husband extends FamilyMember {
 }
 
 // ---------------------------------------------------------------------------------------------------------
-class Wife extends FamilyMember {
+class Wife {
+  Wife(FamilyMember classFami) {
+    this.unifiedClass = classFami;
+  }
+  FamilyMember unifiedClass = FamilyMember();
+
   String name = "Eliza";
   int huppenes = 100;
   int hungry = 30;
 
   bool eating() {
-    super.dirting("human");
+    unifiedClass.dirting("human");
 
-    List<int> result = super.eat(30 - this.hungry);
+    List<int> result = unifiedClass.eat(30 - this.hungry);
 
     if (result[0] == 0 && result[1] == 0) {
       print("В доме нет еды");
@@ -130,9 +139,9 @@ class Wife extends FamilyMember {
 
   void buyFood() {
     this.hungry -= 10;
-    super.dirting("human");
+    unifiedClass.dirting("human");
 
-    int result = super.buyF();
+    int result = unifiedClass.buyF();
     if (result == 0) {
       print("У нас нет денег");
     } else if (result > 0) {
@@ -144,9 +153,9 @@ class Wife extends FamilyMember {
 
   void buyShuba() {
     this.hungry -= 10;
-    super.dirting("human");
+    unifiedClass.dirting("human");
 
-    int result = super.buyS();
+    int result = unifiedClass.buyS();
     if (result == 60) {
       this.huppenes += 60;
       print(
@@ -159,7 +168,7 @@ class Wife extends FamilyMember {
   void cleaning() {
     this.hungry -= 10;
 
-    int result = super.clean();
+    int result = unifiedClass.clean();
     print("$name вытерла пыль с мужа. В доме $result единиц грязи");
   }
 }
@@ -168,13 +177,23 @@ class Wife extends FamilyMember {
 class Actions {
   String lastnameFamily;
 
+  // Actions(this.lastnameFamily)
+  //     : familyMember = FamilyMember(),
+  //       husband = Husband(),
+  //       wife = Wife();
   FamilyMember familyMember;
   Husband husband;
   Wife wife;
-  Actions(this.lastnameFamily)
-      : familyMember = FamilyMember(),
-        husband = Husband(),
-        wife = Wife();
+  Actions(this.lastnameFamily, FamilyMember familyMemberClass,
+      Husband husbandClass, Wife wifeClass) {
+    FamilyMember familyMemberClass = FamilyMember();
+    Husband husbandClass = Husband(familyMemberClass);
+    Wife wifeClass = Wife(familyMemberClass);
+
+    this.familyMember = familyMemberClass;
+    this.husband = husbandClass;
+    this.wife = wifeClass;
+  }
 
   bool alive() {
     if (husband.hungry > 0 &&
@@ -231,7 +250,11 @@ class Actions {
 }
 
 void main() {
-  Actions actionPanel = Actions("Воронины");
+  FamilyMember familyMemberClass = FamilyMember();
+  Husband husbandClass = Husband(familyMemberClass);
+  Wife wifeClass;
+  Actions actionPanel =
+      Actions("Воронины", familyMemberClass, husbandClass, wifeClass);
 
   for (int i = 1; i < 356; i++) {
     print("-----------------------------------------");
