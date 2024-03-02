@@ -1,8 +1,9 @@
 import 'dart:math';
 
-class FamilyMember {
+class Home {
   int many = 100;
   int food = 50;
+  int foodForCat = 30;
   int dirt = 0;
 
   List<int> eat(int hungry) {
@@ -21,11 +22,22 @@ class FamilyMember {
     }
   }
 
-  void dirting(String who) {
-    if (who == "human") {
-      this.dirt += 5;
+  List<int> catEat(int hungry) {
+    if (this.foodForCat >= hungry) {
+      this.foodForCat -= hungry;
+      return [
+        this.foodForCat,
+        hungry
+      ]; // возращает скок осталось, и сколько съел
+    } else if (this.food != 0) {
+      int afforableFood = hungry - this.foodForCat;
+      this.foodForCat -= afforableFood;
+      return [
+        this.foodForCat,
+        afforableFood
+      ]; // возращает скок осталось, и сколько съел
     } else {
-      this.dirt += 10;
+      return [0, 0]; // возращает скок осталось, и сколько съел
     }
   }
 
@@ -70,193 +82,197 @@ class FamilyMember {
 }
 
 // ---------------------------------------------------------------------------------------------------------
-class Husband extends FamilyMember {
-  Husband(FamilyMember classFami) {
-    this.unifiedClass = classFami;
-  }
-  FamilyMember unifiedClass = FamilyMember();
-  String name = "Alex";
-  int huppenes = 100;
+class Cat {
+  String name = "";
   int hungry = 30;
 
-  bool eating() {
-    super.dirting("human");
+  Cat(String nameCat) : name = nameCat;
 
-    List<int> result = super.eat(30 - this.hungry);
-
-    if (result[0] == 0 && result[1] == 0) {
-      print("В доме нет еды");
-      return true;
-    }
-
-    this.hungry += result[1];
-    print('$name съела ${result[1]} единиц еды. Осталось еды: ${result[0]}.');
-    return false;
+  void destroyHome() {
+    print("Кот дерет обои");
   }
 
-  void playing() {
-    this.hungry -= 10;
-    super.dirting("human");
-
-    this.huppenes += 20;
-    print("$name поиграл в WoT. Его уровень счастья $huppenes");
-  }
-
-  void working() {
-    this.hungry -= 10;
-    super.dirting("human");
-
-    int result = super.work();
-    print("$name работал. Теперь в доме $result денег");
+  void sleeping() {
+    print("Кот уснул от безделья");
   }
 }
 
 // ---------------------------------------------------------------------------------------------------------
-class Wife {
-  Wife(FamilyMember classFami) {
-    this.unifiedClass = classFami;
-  }
-  FamilyMember unifiedClass = FamilyMember();
-
-  String name = "Eliza";
+class Person {
+  String name = "";
   int huppenes = 100;
   int hungry = 30;
 
-  bool eating() {
-    unifiedClass.dirting("human");
+  Person(String Inputname) : name = Inputname;
+}
 
-    List<int> result = unifiedClass.eat(30 - this.hungry);
+// ---------------------------------------------------------------------------------------------------------
+class Actions {
+  String lastnameFamily;
+  int allFood = 0;
+  int allMany = 0;
+  int allShuba = 0;
+
+  Home home;
+  Cat cat = Cat("Lilit");
+  Person husband = Person("Alex");
+  Person wife = Person("Eliza");
+  Actions(this.lastnameFamily)
+      : home = Home(),
+        cat = Cat("Lilit"),
+        husband = Person("Alex"),
+        wife = Person("Eliza");
+
+  bool eating(Person classObj) {
+    List<int> result = home.eat(30 - classObj.hungry);
 
     if (result[0] == 0 && result[1] == 0) {
       print("В доме нет еды");
       return true;
     }
 
-    this.hungry += result[1];
-    print('$name съела ${result[1]} единиц еды. Осталось еды: ${result[0]}.');
+    classObj.hungry += result[1];
+    print(
+        '${classObj.name} съело ${result[1]} единиц еды. Осталось еды: ${result[0]}.');
+    this.allFood += result[1];
     return false;
   }
 
-  void buyFood() {
-    this.hungry -= 10;
-    unifiedClass.dirting("human");
+  bool catEating() {
+    List<int> result = home.catEat(10 - cat.hungry);
 
-    int result = unifiedClass.buyF();
+    if (result[0] == 0 && result[1] == 0) {
+      print("В доме нет еды");
+      return true;
+    }
+
+    cat.hungry += result[1];
+    print(
+        '${cat.name} съело ${result[1]} единиц еды. Осталось еды: ${result[0]}.');
+    return false;
+  }
+
+  void playing() {
+    husband.hungry -= 10;
+
+    husband.huppenes += 20;
+    print(
+        "${husband.name} поиграл в WoT. Его уровень счастья ${husband.huppenes}");
+  }
+
+  void working() {
+    husband.hungry -= 10;
+
+    int result = home.work();
+    print("${husband.name} работал. Теперь в доме $result денег");
+    this.allMany += 150;
+  }
+
+  void buyFood() {
+    wife.hungry -= 10;
+
+    int result = home.buyF();
     if (result == 0) {
-      print("У нас нет денег");
+      print("${wife.name} НЕ купила еды.У нас нет денег");
     } else if (result > 0) {
-      print("У нас есть $result единиц еды");
+      print("${wife.name} купила еды. У нас есть $result единиц еды");
     } else {
       print("Что то не так");
     }
   }
 
   void buyShuba() {
-    this.hungry -= 10;
-    unifiedClass.dirting("human");
+    wife.hungry -= 10;
 
-    int result = unifiedClass.buyS();
+    int result = home.buyS();
     if (result == 60) {
-      this.huppenes += 60;
+      wife.huppenes += 60;
       print(
-          "$name купила шубу. Она счастлива! У неё ${this.huppenes} единиц счастья");
+          "${wife.name} купила шубу. Она счастлива! У неё ${wife.huppenes} единиц счастья");
+      this.allShuba += 1;
     } else {
-      print("Жена не купила шубу. У неё ${this.huppenes} единиц счастья");
+      print("Жена не купила шубу. У неё ${wife.huppenes} единиц счастья");
     }
   }
 
   void cleaning() {
-    this.hungry -= 10;
+    wife.hungry -= 10;
 
-    int result = unifiedClass.clean();
-    print("$name вытерла пыль с мужа. В доме $result единиц грязи");
-  }
-}
-
-// ---------------------------------------------------------------------------------------------------------
-class Actions {
-  String lastnameFamily;
-
-  // Actions(this.lastnameFamily)
-  //     : familyMember = FamilyMember(),
-  //       husband = Husband(),
-  //       wife = Wife();
-  FamilyMember familyMember;
-  Husband husband;
-  Wife wife;
-  Actions(this.lastnameFamily, FamilyMember familyMemberClass,
-      Husband husbandClass, Wife wifeClass) {
-    FamilyMember familyMemberClass = FamilyMember();
-    Husband husbandClass = Husband(familyMemberClass);
-    Wife wifeClass = Wife(familyMemberClass);
-
-    this.familyMember = familyMemberClass;
-    this.husband = husbandClass;
-    this.wife = wifeClass;
+    int result = home.clean();
+    print("${wife.name} вытерла пыль с мужа. В доме $result единиц грязи");
   }
 
-  bool alive() {
-    if (husband.hungry > 0 &&
-        husband.huppenes > 0 &&
-        wife.hungry > 0 &&
-        wife.huppenes > 0) {
-      return true;
-    } else {
-      return false;
-    }
+  void playingWithCatInPocker(Person classObj) {
+    classObj.hungry -= 2;
+    classObj.huppenes += 5;
+    print("${classObj.name} гладит кота. Он стал веселее");
   }
 
   bool? followLiveForHusband({int condition = 0}) {
-    if (husband.hungry <= 10 && familyMember.food > 10 || condition == 1) {
-      return husband.eating();
-      // print("${husband.name} поел");
-    } else if (familyMember.many <= 20 || condition == 3) {
-      husband.working();
+    home.dirt += 2;
+    if (husband.hungry <= 10 && home.food > 10 || condition == 1) {
+      return this.eating(husband);
+    } else if (home.many <= 20 || condition == 3) {
+      this.working();
       return null;
-      // print("${husband.name} поработал");
+    } else if (husband.huppenes <= 5 || condition == 4) {
+      this.playingWithCatInPocker(husband);
+      return null;
     } else if (husband.huppenes <= 10 || condition == 2) {
-      husband.playing();
+      this.playing();
       return null;
-      // print("${husband.name} поиграл в WoT");
     } else {
-      int randomNumber = Random().nextInt(3) + 1;
+      int randomNumber = Random().nextInt(4) + 1;
       this.followLiveForHusband(condition: randomNumber);
       return null;
     }
   }
 
   bool? followLiveForWife({int condition = 0}) {
-    if (wife.hungry <= 10 && familyMember.food > 10 || condition == 1) {
-      return wife.eating();
-      // print("${wife.name} поела");
-    } else if (familyMember.food <= 10 || condition == 3) {
-      wife.buyFood();
+    home.dirt += 3;
+    if (wife.hungry <= 10 && home.food > 10 || condition == 1) {
+      return this.eating(wife);
+    } else if (home.food <= 10 || condition == 3) {
+      this.buyFood();
       return null;
-      // print("${wife.name} купила еды в дом");
+    } else if (wife.huppenes <= 5 || condition == 5) {
+      this.playingWithCatInPocker(wife);
+      return null;
     } else if (wife.huppenes <= 10 || condition == 2) {
-      wife.buyShuba();
+      this.buyShuba();
       return null;
-      // print("${wife.name} купила шубу");
-    } else if (familyMember.dirt >= 80 || condition == 4) {
-      wife.cleaning();
+    } else if (home.dirt >= 80 || condition == 4) {
+      this.cleaning();
       return null;
-      // print("${wife.name} убралась");
     } else {
-      int randomNumber = Random().nextInt(4) + 1;
+      int randomNumber = Random().nextInt(5) + 1;
       this.followLiveForWife(condition: randomNumber);
+      return null;
+    }
+  }
+
+  bool? followLiveForCat({int condition = 0}) {
+    if (cat.hungry <= 10 || condition == 1) {
+      return this.catEating();
+    } else if (condition == 2) {
+      cat.sleeping();
+      return null;
+    } else if (condition == 3) {
+      cat.destroyHome();
+      home.dirt += 5;
+      return null;
+    } else {
+      int randomNumber = Random().nextInt(3) + 1;
+      this.followLiveForCat(condition: randomNumber);
       return null;
     }
   }
 }
 
 void main() {
-  FamilyMember familyMemberClass = FamilyMember();
-  Husband husbandClass = Husband(familyMemberClass);
-  Wife wifeClass;
-  Actions actionPanel =
-      Actions("Воронины", familyMemberClass, husbandClass, wifeClass);
+  Actions actionPanel = Actions("Воронины");
 
-  for (int i = 1; i < 356; i++) {
+  for (int i = 1; i < 365; i++) {
     print("-----------------------------------------");
     print('День $i');
 
@@ -269,10 +285,14 @@ void main() {
       print("Нет еды");
       return;
     }
-    if (!actionPanel.alive()) {
-      print(
-          "Кто-то в семьи ${actionPanel.lastnameFamily} умер. Игра не пройдена! Попробуй ещё раз!");
+
+    if (actionPanel.followLiveForCat() == true) {
+      print("Нет еды");
       return;
     }
   }
+  print("-----------------------------------------");
+  print("Всего еды скушано: ${actionPanel.allFood}");
+  print("Всего денег заработано: ${actionPanel.allMany}");
+  print("Всего шуб куплено: ${actionPanel.allShuba}");
 }
